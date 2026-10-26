@@ -4,7 +4,8 @@
         Title="Thông báo"
         Width="400" SizeToContent="Height"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
-        ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True">
+        ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True"
+        ShowActivated="False">
 
     <Border Margin="14" CornerRadius="12" Background="{StaticResource BgWhite}"
             BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">

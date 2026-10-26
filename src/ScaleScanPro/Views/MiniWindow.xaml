@@ -37,7 +37,7 @@
                         Background="#99000000" Padding="8,3">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding WeightText}" Foreground="White" FontFamily="Consolas" FontSize="16" FontWeight="Bold"/>
-                        <TextBlock Text=" kg" Foreground="#C7D0FC" FontSize="11" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                        <TextBlock Text=" g" Foreground="#C7D0FC" FontSize="11" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
                     </StackPanel>
                 </Border>
 

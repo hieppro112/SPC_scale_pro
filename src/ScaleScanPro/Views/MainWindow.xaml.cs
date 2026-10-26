@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Microsoft.Win32;
 using ScaleScanPro.Infrastructure;
 using ScaleScanPro.Services;
+using ScaleScanPro.Services.Input;
 using ScaleScanPro.ViewModels;
 
 namespace ScaleScanPro.Views;
@@ -13,15 +14,17 @@ public partial class MainWindow : Window
 {
     private readonly MainViewModel _vm;
     private readonly SettingsService _settings;
+    private readonly RawInputScanner _scanner;
     private MiniWindow? _mini;
     private bool _closing;
 
-    internal MainWindow(MainViewModel viewModel, SettingsService settings)
+    internal MainWindow(MainViewModel viewModel, SettingsService settings, RawInputScanner scanner)
     {
         InitializeComponent();
 
         _vm = viewModel;
         _settings = settings;
+        _scanner = scanner;
         DataContext = viewModel;
 
         _vm.OpenSettingsRequested += OpenSettings;
@@ -128,7 +131,7 @@ public partial class MainWindow : Window
     // ---------- Hộp thoại ----------
     private void OpenSettings()
     {
-        var window = new SettingsWindow(_settings) { Owner = this };
+        var window = new SettingsWindow(_settings, _scanner) { Owner = this };
         window.ShowDialog();
     }
 

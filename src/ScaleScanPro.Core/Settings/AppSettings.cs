@@ -7,6 +7,7 @@ public sealed class AppSettings
     public CameraSettings Camera { get; set; } = new();
     public WeighingSettings Weighing { get; set; } = new();
     public UiSettings Ui { get; set; } = new();
+    public ScannerSettings Scanner { get; set; } = new();
     public string ErrorLogFolder { get; set; } = "";
     public bool DemoMode { get; set; }
 }
@@ -57,6 +58,20 @@ public sealed class WeighingSettings
     public int MinPlainCodeLength { get; set; } = 11;
     /// <summary>Giữ 0.15 như hệ thống cũ; chỉ đổi khi đã kiểm thử độ chính xác quét mã.</summary>
     public float ConfidenceThreshold { get; set; } = 0.15f;
+}
+
+/// <summary>Máy quét barcode USB (chế độ bàn phím). Scale Pro chỉ "nghe" thêm, không chặn phím gửi tới app khác.</summary>
+public sealed class ScannerSettings
+{
+    public bool Enabled { get; set; }
+
+    /// <summary>Mã nhận dạng máy quét dạng VID_xxxx&amp;PID_yyyy (lấy bằng nút "Nhận diện máy quét").</summary>
+    public string DeviceId { get; set; } = "";
+
+    /// <summary>Khoảng cách tối đa giữa hai ký tự của cùng một lượt quét (ms). Người gõ tay chậm hơn nhiều.</summary>
+    public int MaxCharGapMs { get; set; } = 100;
+
+    public int MinLength { get; set; } = 4;
 }
 
 public sealed class UiSettings

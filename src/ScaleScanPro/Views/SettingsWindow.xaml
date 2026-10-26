@@ -162,6 +162,46 @@
                     </StackPanel>
                 </Border>
 
+                <!-- Máy quét USB -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="Máy quét barcode USB" Style="{StaticResource Section}"/>
+                        <CheckBox Content="Nghe máy quét USB (nhận mã dù Scale Pro không ở trên cùng)"
+                                  IsChecked="{Binding ScannerEnabled}" Margin="0,0,0,8"/>
+                        <TextBlock Style="{StaticResource FieldLabel}" TextWrapping="Wrap" TextTrimming="None" Margin="0,0,0,10"
+                                   Text="Máy quét vẫn gõ vào cửa sổ đang được chọn (ví dụ app khác) như bình thường; Scale Pro chỉ nhận thêm một bản sao của mã. Chỉ nghe đúng máy quét đã chọn, bàn phím thường bị bỏ qua. Chỉ dùng được khi máy quét ở chế độ bàn phím USB."/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Thiết bị máy quét"/>
+                            <TextBox Grid.Column="1" Margin="0,0,0,8" IsReadOnly="True" Text="{Binding ScannerDeviceId}"
+                                     ToolTip="Chưa chọn: bấm Nhận diện máy quét rồi quét thử một mã"/>
+                            <Button Grid.Column="2" Margin="8,0,0,8" Style="{StaticResource BtnOutline}"
+                                    Content="Nhận diện máy quét" Click="Learn_Click"/>
+                            <TextBlock Grid.Row="1" Style="{StaticResource FieldLabel}" Text="Khoảng cách ký tự (ms)"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,8" Width="100" HorizontalAlignment="Left"
+                                     Text="{Binding ScannerMaxCharGapMs}"
+                                     ToolTip="Hai ký tự cách nhau quá thời gian này thì không tính là một lượt quét"/>
+                            <TextBlock Grid.Row="2" Style="{StaticResource FieldLabel}" Text="Độ dài tối thiểu mã"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Width="100" HorizontalAlignment="Left" Text="{Binding ScannerMinLength}"/>
+                        </Grid>
+
+                        <Border x:Name="LearnPanel" Visibility="Collapsed" Style="{StaticResource Tile}" Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock x:Name="LearnStatus" TextWrapping="Wrap" TextTrimming="None" FontWeight="SemiBold"/>
+                                <TextBox x:Name="LearnBox" Margin="0,8,0,0" PreviewKeyDown="LearnBox_PreviewKeyDown"
+                                         ToolTip="Mã quét thử sẽ hiện ở đây"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
                 <!-- Khác -->
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
@@ -185,7 +225,7 @@
         <Border Grid.Row="1" Background="{StaticResource BgWhite}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,12">
                 <Button Style="{StaticResource BtnOutline}" Content="Hủy" Width="90" Margin="0,0,8,0" IsCancel="True"/>
-                <Button Style="{StaticResource BtnPrimary}" Content="Lưu" Width="110" IsDefault="True" Click="Save_Click"/>
+                <Button x:Name="SaveButton" Style="{StaticResource BtnPrimary}" Content="Lưu" Width="110" IsDefault="True" Click="Save_Click"/>
             </StackPanel>
         </Border>
     </Grid>

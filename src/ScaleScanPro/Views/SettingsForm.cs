@@ -37,6 +37,12 @@ internal sealed class SettingsForm
     public string MinPlainCodeLength { get; set; } = "";
     public string ConfidenceThreshold { get; set; } = "";
 
+    // Máy quét USB
+    public bool ScannerEnabled { get; set; }
+    public string ScannerDeviceId { get; set; } = "";
+    public string ScannerMaxCharGapMs { get; set; } = "";
+    public string ScannerMinLength { get; set; } = "";
+
     // Khác
     public bool SearchContains { get; set; }
     public string ErrorLogFolder { get; set; } = "";
@@ -67,6 +73,10 @@ internal sealed class SettingsForm
         WaitTimeoutSeconds = Fmt(s.Weighing.WaitTimeoutSeconds),
         MinPlainCodeLength = Fmt(s.Weighing.MinPlainCodeLength),
         ConfidenceThreshold = Fmt(s.Weighing.ConfidenceThreshold),
+        ScannerEnabled = s.Scanner.Enabled,
+        ScannerDeviceId = s.Scanner.DeviceId,
+        ScannerMaxCharGapMs = Fmt(s.Scanner.MaxCharGapMs),
+        ScannerMinLength = Fmt(s.Scanner.MinLength),
         SearchContains = s.Ui.SearchContains,
         ErrorLogFolder = s.ErrorLogFolder,
         DemoMode = s.DemoMode
@@ -103,6 +113,13 @@ internal sealed class SettingsForm
         target.Weighing.WaitTimeoutSeconds = Int(WaitTimeoutSeconds, "Thời gian chờ cân (giây)", 5, 600, errors);
         target.Weighing.MinPlainCodeLength = Int(MinPlainCodeLength, "Độ dài tối thiểu mã PO", 1, 100, errors);
         target.Weighing.ConfidenceThreshold = (float)Double(ConfidenceThreshold, "Ngưỡng tin cậy YOLO", 0.01, 0.99, errors);
+
+        target.Scanner.Enabled = ScannerEnabled;
+        target.Scanner.DeviceId = ScannerDeviceId.Trim();
+        target.Scanner.MaxCharGapMs = Int(ScannerMaxCharGapMs, "Khoảng cách ký tự máy quét (ms)", 20, 1000, errors);
+        target.Scanner.MinLength = Int(ScannerMinLength, "Độ dài tối thiểu mã quét", 1, 100, errors);
+        if (ScannerEnabled && target.Scanner.DeviceId.Length == 0)
+            errors.Add("Máy quét USB: chưa nhận diện thiết bị (bấm \"Nhận diện máy quét\" rồi quét thử một mã)");
 
         target.Ui.SearchContains = SearchContains;
         target.ErrorLogFolder = ErrorLogFolder.Trim();

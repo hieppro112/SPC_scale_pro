@@ -61,6 +61,20 @@ dotnet test
 `publish.ps1` kiểm tra `onnxruntime.dll`, `OpenCvSharpExtern.dll`, `Models\best.onnx` có trong gói — đây là các file từng bị thiếu khi cài bằng ClickOnce
 trên hệ thống cũ. Máy đích cần **Visual C++ Redistributable 2015-2022 (x64)**; app kiểm tra và báo ngay khi khởi động.
 
+## Máy quét barcode USB (quét một lần cho cả Scale Scan Pro và app khác)
+
+Máy quét USB ở chế độ bàn phím gõ mã vào cửa sổ đang được chọn. Scale Scan Pro dùng Windows Raw Input để **nghe thêm** đúng máy quét đó,
+không chặn và không gửi lại phím: app kia (không cần source) nhận mã như người gõ, Scale Scan Pro nhận cùng mã để tra PO và cân.
+
+1. ⚙ Cài đặt → *Máy quét barcode USB* → **Nhận diện máy quét** → quét thử một mã → Lưu.
+2. Khi quét, để **app kia là cửa sổ đang được chọn**; Scale Scan Pro nhận mã dù đang thu nhỏ hay nằm phía sau.
+3. Bàn phím thường bị bỏ qua hoàn toàn (không đọc, không lưu, không ghi log). Máy quét được nhận ra theo VID/PID nên cắm sang cổng USB khác vẫn nhận.
+4. Mã từ máy quét cho phép quét lại đúng mã vừa xử lý (thao tác cố ý), khác với camera nhìn thấy cùng một tem liên tục.
+
+Lưu ý: phần mềm diệt virus/EDR có thể cảnh báo vì app đọc đầu vào bàn phím; chỉ dùng được với máy quét chế độ bàn phím (HID).
+
+Biến môi trường `SCALESCANPRO_DATA` đặt thư mục dữ liệu khác (chạy thử, bản portable) để không đụng cấu hình thật.
+
 ## Chẩn đoán
 
 - Log: `%LocalAppData%\ScaleScanPro\logs\app.log` (xoay vòng 1 MB × 4). Ghi môi trường, file thiếu, lỗi chưa xử lý, trạng thái camera/cân.

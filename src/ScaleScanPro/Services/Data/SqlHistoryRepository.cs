@@ -8,10 +8,10 @@ namespace ScaleScanPro.Services.Data;
 internal sealed class SqlHistoryRepository : IHistoryRepository
 {
     private const string InsertSql = @"
-INSERT INTO [dbo].[F2_Packing_Scale_History] (AUFNR, PHCD, PHTX, PSTX, GAMNG, kg, UPDDT)
+INSERT INTO [KVH].[dbo].[PackingScaleHistory] (AUFNR, PHCD, PHTX, PSTX, GAMNG, kg, UPDDT)
 SELECT @AUFNR, @PHCD, @PHTX, @PSTX, @GAMNG, @kg, @UPDDT
 WHERE NOT EXISTS (
-    SELECT 1 FROM [dbo].[F2_Packing_Scale_History] WITH (UPDLOCK, HOLDLOCK) WHERE AUFNR = @AUFNR
+    SELECT 1 FROM [KVH].[dbo].[PackingScaleHistory] WITH (UPDLOCK, HOLDLOCK) WHERE AUFNR = @AUFNR
 );";
 
     private const string Columns = "Id, AUFNR, PHCD, PHTX, PSTX, GAMNG, kg, UPDDT";
@@ -53,7 +53,7 @@ WHERE NOT EXISTS (
 
         var sql = $@"
 SELECT {Columns}, COUNT(*) OVER() AS TotalCount
-FROM [dbo].[F2_Packing_Scale_History]
+FROM [KVH].[dbo].[PackingScaleHistory]
 {where}
 ORDER BY Id DESC
 OFFSET @offset ROWS FETCH NEXT @take ROWS ONLY;";
@@ -84,7 +84,7 @@ OFFSET @offset ROWS FETCH NEXT @take ROWS ONLY;";
             if (items.Count == 0 && page > 1)
             {
                 await using var countCommand = new SqlCommand(
-                    $"SELECT COUNT(*) FROM [dbo].[F2_Packing_Scale_History] {where};", connection)
+                    $"SELECT COUNT(*) FROM [KVH].[dbo].[PackingScaleHistory] {where};", connection)
                 { CommandTimeout = _factory.CommandTimeoutSeconds };
                 AddFilterParameter(countCommand, pattern);
                 total = Convert.ToInt32(await countCommand.ExecuteScalarAsync(ct).ConfigureAwait(false));
@@ -103,7 +103,7 @@ OFFSET @offset ROWS FETCH NEXT @take ROWS ONLY;";
         var (where, pattern) = BuildFilter(poFilter, contains);
         var sql = $@"
 SELECT TOP (@max) {Columns}
-FROM [dbo].[F2_Packing_Scale_History]
+FROM [KVH].[dbo].[PackingScaleHistory]
 {where}
 ORDER BY Id DESC;";
 
