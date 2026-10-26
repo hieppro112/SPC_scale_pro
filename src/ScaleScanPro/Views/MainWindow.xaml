@@ -5,7 +5,7 @@
         Width="1180" Height="780" MinWidth="1000" MinHeight="680"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBase}"
-        FontFamily="Segoe UI">
+        FontFamily="Segoe UI" Icon="/Views/icons8-packing-48.png">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="46" ResizeBorderThickness="6" GlassFrameThickness="0"
@@ -61,6 +61,14 @@
                         <StackPanel Orientation="Horizontal">
                             <Ellipse Style="{StaticResource StatusDot}" Fill="{Binding IsDbOnline, Converter={StaticResource StatusBrush}}"/>
                             <TextBlock Text="SQL" FontSize="12" Foreground="{StaticResource TxtSub}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Tile}" CornerRadius="14" Padding="10,4" Margin="8,0,0,0"
+                            ToolTip="{Binding ScannerStatusText}"
+                            Visibility="{Binding IsScannerEnabled, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Style="{StaticResource StatusDot}" Fill="{Binding IsScannerActive, Converter={StaticResource StatusBrush}}"/>
+                            <TextBlock Text="Máy quét" FontSize="12" Foreground="{StaticResource TxtSub}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -163,7 +171,7 @@
                                     <Border Style="{StaticResource Tile}">
                                         <StackPanel>
                                             <TextBlock Text="MÃ VỪA QUÉT" Style="{StaticResource Caption}" Margin="0,0,0,4"/>
-                                            <TextBlock Text="{Binding LastCode}" FontFamily="Consolas" FontWeight="Bold"
+                                            <TextBox Text="{Binding LastCode}" FontFamily="Consolas" FontWeight="Bold"
                                                        Foreground="{StaticResource Accent}" ToolTip="{Binding LastCode}"/>
                                         </StackPanel>
                                     </Border>
@@ -189,7 +197,7 @@
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                 <TextBlock Text="{Binding WeightText}" FontSize="46" FontWeight="Bold"
                                                            FontFamily="Consolas" Foreground="{StaticResource Accent}"/>
-                                                <TextBlock Text=" kg" FontSize="18" FontWeight="SemiBold" Foreground="#7B8FE8"
+                                                <TextBlock Text=" g" FontSize="18" FontWeight="SemiBold" Foreground="#7B8FE8"
                                                            VerticalAlignment="Bottom" Margin="2,0,0,8"/>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
@@ -313,7 +321,7 @@
                                     <DataGridTextColumn Header="PSTX" Binding="{Binding Pstx}" Width="1*"/>
                                     <DataGridTextColumn Header="SỐ LƯỢNG" Binding="{Binding Quantity, StringFormat={}{0:0.###}}" Width="1*"
                                                         ElementStyle="{StaticResource CellRight}"/>
-                                    <DataGridTextColumn Header="KHỐI LƯỢNG (KG)" Binding="{Binding Kg, StringFormat={}{0:0.000}}" Width="1.4*"
+                                    <DataGridTextColumn Header="KHỐI LƯỢNG (G)" Binding="{Binding Kg, StringFormat={}{0:0.000}}" Width="1.4*"
                                                         ElementStyle="{StaticResource CellRight}"/>
                                     <DataGridTextColumn Header="THỜI GIAN" Binding="{Binding WeighedAt, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" Width="1.7*"/>
                                 </DataGrid.Columns>

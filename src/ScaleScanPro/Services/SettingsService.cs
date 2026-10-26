@@ -84,6 +84,10 @@ internal sealed class SettingsService
         s.Camera ??= new CameraSettings();
         s.Weighing ??= new WeighingSettings();
         s.Ui ??= new UiSettings();
+        s.Scanner ??= new ScannerSettings();
+        s.Scanner.DeviceId ??= "";
+        s.Scanner.MaxCharGapMs = Math.Clamp(s.Scanner.MaxCharGapMs, 20, 1000);
+        s.Scanner.MinLength = Math.Clamp(s.Scanner.MinLength, 1, 100);
 
         s.Database.TimeoutSeconds = Math.Clamp(s.Database.TimeoutSeconds, 3, 120);
         s.Scale.BaudRate = s.Scale.BaudRate <= 0 ? 9600 : s.Scale.BaudRate;

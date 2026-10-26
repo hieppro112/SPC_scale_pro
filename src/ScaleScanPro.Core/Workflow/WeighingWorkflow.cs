@@ -84,15 +84,22 @@ public sealed class WeighingWorkflow
         get { lock (_gate) return _currentPo; }
     }
 
-    /// <summary>Gọi mỗi khi camera đọc được một mã. Bỏ qua nếu đang bận hoặc trùng mã vừa xử lý.</summary>
-    public async Task HandleCodeAsync(string rawCode)
+    /// <summary>
+    /// Gọi mỗi khi đọc được một mã. Bỏ qua nếu đang bận. Mã trùng với mã vừa xử lý cũng bị bỏ qua
+    /// (camera nhìn thấy cùng một tem liên tục) trừ khi <paramref name="force"/> = true,
+    /// dùng cho máy quét cầm tay vì đó là thao tác cố ý của người dùng.
+    /// </summary>
+    public async Task HandleCodeAsync(string rawCode, bool force = false)
     {
         var s = _settings();
         int startGen;
 
         lock (_gate)
         {
-            if (_state != WorkflowState.Idle || string.Equals(rawCode, _lastCode, StringComparison.Ordinal))
+            if (_state != WorkflowState.Idle)
+                return;
+
+            if (!force && string.Equals(rawCode, _lastCode, StringComparison.Ordinal))
                 return;
 
             _lastCode = rawCode;

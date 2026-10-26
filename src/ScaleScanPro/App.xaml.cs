@@ -7,6 +7,7 @@ using ScaleScanPro.Infrastructure;
 using ScaleScanPro.Services;
 using ScaleScanPro.Services.Data;
 using ScaleScanPro.Services.Demo;
+using ScaleScanPro.Services.Input;
 using ScaleScanPro.Services.Scale;
 using ScaleScanPro.ViewModels;
 using ScaleScanPro.Views;
@@ -46,7 +47,10 @@ public partial class App : Application
         settings.Load();
         _services = BuildServices(settings);
 
-        var main = new MainWindow(_services.GetRequiredService<MainViewModel>(), settings);
+        var main = new MainWindow(
+            _services.GetRequiredService<MainViewModel>(),
+            settings,
+            _services.GetRequiredService<RawInputScanner>());
         MainWindow = main;
         main.Show();
 
@@ -90,6 +94,7 @@ public partial class App : Application
         services.AddSingleton<IScaleReader>(sp => sp.GetRequiredService<ScaleService>());
         services.AddSingleton<IErrorLogWriter, ErrorLogWriter>();
         services.AddSingleton<INoticeService, NoticeWindowService>();
+        services.AddSingleton(_ => new RawInputScanner());
         services.AddSingleton(_ => new ScanPipeline(AppPaths.ModelPathOrFallback()));
         services.AddSingleton(sp => new WeighingWorkflow(
             sp.GetRequiredService<IPoRepository>(),

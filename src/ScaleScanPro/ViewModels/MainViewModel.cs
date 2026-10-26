@@ -13,6 +13,7 @@ using ScaleScanPro.Core.Workflow;
 using ScaleScanPro.Infrastructure;
 using ScaleScanPro.Services;
 using ScaleScanPro.Services.Demo;
+using ScaleScanPro.Services.Input;
 using ScaleScanPro.Services.Scale;
 using ScaleScanPro.Vision;
 
@@ -34,6 +35,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private readonly IHistoryRepository _history;
     private readonly PendingQueue _pending;
     private readonly INoticeService _notices;
+    private readonly RawInputScanner _scanner;
     private readonly Dispatcher _ui;
     private readonly DispatcherTimer _refreshTimer;
     private readonly DispatcherTimer _toastTimer;
@@ -48,8 +50,10 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         ScaleService scale,
         IHistoryRepository history,
         PendingQueue pending,
-        INoticeService notices)
+        INoticeService notices,
+        RawInputScanner scanner)
     {
+        _scanner = scanner;
         _settings = settings;
         _workflow = workflow;
         _pipeline = pipeline;
@@ -120,6 +124,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty] private bool _isDbOnline = true;
     [ObservableProperty] private string _dbStatusText = "SQL: chưa kiểm tra";
     [ObservableProperty] private string _pendingText = "";
+    [ObservableProperty] private bool _isScannerEnabled;
+    [ObservableProperty] private bool _isScannerActive;
+    [ObservableProperty] private string _scannerStatusText = "";
     [ObservableProperty] private bool _isCompact;
     [ObservableProperty] private bool _isToastVisible;
     [ObservableProperty] private string _toastMessage = "";
@@ -170,6 +177,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         await LoadCamerasAsync();
         _initialized = true;
+
+        _scanner.Start();
+        ApplyScannerSettings();
 
         _scale.Start();
         await StartScanningAsync();
@@ -249,6 +259,13 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             CameraStatusText = message;
             IsCameraRunning = status == CameraStatus.Running;
         });
+
+        _scanner.CodeScanned += (code, deviceId) =>
+        {
+            Post(() => LastCode = code.Length > 60 ? code[..60] + "…" : code);
+            // force: quét tay bằng máy quét là thao tác cố ý nên cho phép quét lại đúng mã vừa xử lý
+            _ = RunSafe(() => _workflow.HandleCodeAsync(code, force: true), "xử lý mã từ máy quét");
+        };
 
         _pending.Synced += count => Post(() =>
         {
@@ -495,7 +512,25 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Compact() => CompactRequested?.Invoke();
 
-    private void OnSettingsChanged() => _ = ApplySettingsAsync();
+    private void OnSettingsChanged()
+    {
+        ApplyScannerSettings();
+        _ = ApplySettingsAsync();
+    }
+
+    private void ApplyScannerSettings()
+    {
+        var s = _settings.Current.Scanner;
+        _scanner.Configure(s);
+
+        IsScannerEnabled = s.Enabled;
+        IsScannerActive = s.Enabled && !string.IsNullOrWhiteSpace(s.DeviceId);
+        ScannerStatusText = !s.Enabled
+            ? ""
+            : IsScannerActive
+                ? $"Máy quét USB: đang nghe ({s.DeviceId})"
+                : "Máy quét USB: chưa nhận diện thiết bị";
+    }
 
     private async Task ApplySettingsAsync()
     {
